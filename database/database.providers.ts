@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
 
+mongoose.set("strictQuery", false);
+
 export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION',

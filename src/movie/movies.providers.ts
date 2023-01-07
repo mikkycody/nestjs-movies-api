@@ -1,5 +1,5 @@
 import { Connection } from 'mongoose';
-import { MovieSchema } from './movie.schema';
+import { MovieSchema } from '../../database/schemas/Movie/movie.schema';
 
 export const moviesProviders = [
   {
