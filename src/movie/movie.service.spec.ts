@@ -55,7 +55,6 @@ describe('MovieService', () => {
             create: jest.fn(),
             findByIdAndUpdate: jest.fn(),
             findByIdAndDelete: jest.fn(),
-            save: jest.fn(),
             exec: jest.fn(),
           },
         },

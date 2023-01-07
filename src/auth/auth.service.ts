@@ -11,9 +11,13 @@ export class AuthService {
     private userModel: Model<User>,
   ) {}
 
-  protected async hashPassword(password): Promise<string> {
+  async hashPassword(password): Promise<string> {
     const hash = await argon.hash(password);
     return hash;
+  }
+
+  async verifyPassword(hash: string, plainPassword: string): Promise<boolean> {
+    return argon.verify(hash, plainPassword);
   }
 
   async register(dto: RegisterUserDto): Promise<User> {
@@ -27,13 +31,15 @@ export class AuthService {
         email: dto.email,
       })
       .exec();
-
     if (!user) {
       throw new ForbiddenException('Credentials do not match');
     }
 
-    const verify = await argon.verify(user.password as string, dto.password);
-
+    const verify = await this.verifyPassword(
+      user.password as string,
+      dto.password,
+    );
+    
     if (!verify) {
       throw new ForbiddenException('Credentials do not match');
     }
