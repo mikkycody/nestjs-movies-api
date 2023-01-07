@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MovieService } from './movie.service';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Movie } from 'src/interfaces';
-import { async } from 'rxjs';
 import { GenderEnum } from 'src/enums';
 
 const mockMovie = {
@@ -42,6 +41,7 @@ const mockMovieCollection = [
 describe('MovieService', () => {
   let service: MovieService;
   let model: Model<Movie>;
+  let movieId = new Types.ObjectId();
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -53,6 +53,8 @@ describe('MovieService', () => {
             constructor: jest.fn().mockResolvedValue(mockMovie),
             find: jest.fn(),
             create: jest.fn(),
+            findByIdAndUpdate: jest.fn(),
+            findByIdAndDelete: jest.fn(),
             save: jest.fn(),
             exec: jest.fn(),
           },
@@ -64,7 +66,7 @@ describe('MovieService', () => {
     model = module.get<Model<Movie>>('MOVIE_MODEL');
   });
 
-  it('should be set', () => {
+  it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
@@ -100,5 +102,59 @@ describe('MovieService', () => {
       imageUrl: ' https://imdb.net/lmnopq',
     });
     expect(movie).toEqual(mockMovie);
+  });
+
+  it('should update a movie', async () => {
+    jest.spyOn(model, 'findByIdAndUpdate').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({
+        userId: 1,
+        title: 'Updated Movie Title',
+        description: 'Movie description',
+        releaseDate: '2023-01-07',
+        rating: 4,
+        gender: 'Male',
+        actors: ['Jackie chan', 'George Bush'],
+        imageUrl: ' https://imdb.net/lmnopq',
+      }),
+    } as any);
+    const movie = await service.update(movieId, {
+      title: 'Updated Movie Title',
+    });
+    expect(movie).toEqual({
+      userId: 1,
+      title: 'Updated Movie Title',
+      description: 'Movie description',
+      releaseDate: '2023-01-07',
+      rating: 4,
+      gender: 'Male',
+      actors: ['Jackie chan', 'George Bush'],
+      imageUrl: ' https://imdb.net/lmnopq',
+    });
+  });
+
+  it('should delete a movie', async () => {
+    jest.spyOn(model, 'findByIdAndDelete').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({
+        userId: 1,
+        title: 'Movie Title',
+        description: 'Movie description',
+        releaseDate: '2023-01-07',
+        rating: 4,
+        gender: 'Male',
+        actors: ['Jackie chan', 'George Bush'],
+        imageUrl: ' https://imdb.net/lmnopq',
+      }),
+    } as any);
+    const movie = await service.destroy(movieId);
+    expect(movie).toEqual({
+      userId: 1,
+      title: 'Movie Title',
+      description: 'Movie description',
+      releaseDate: '2023-01-07',
+      rating: 4,
+      gender: 'Male',
+      actors: ['Jackie chan', 'George Bush'],
+      imageUrl: ' https://imdb.net/lmnopq',
+    });
   });
 });
