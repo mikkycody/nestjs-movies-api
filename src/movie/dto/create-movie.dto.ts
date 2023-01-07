@@ -36,7 +36,7 @@ export class CreateMovieDto {
     },
   )
   @IsNotEmpty()
-  releaseDate: Date;
+  releaseDate: String;
 
   @Min(1)
   @Max(5)
