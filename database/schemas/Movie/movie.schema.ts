@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { GenderEnum } from '../../../src/enums';
 export const MovieSchema = new mongoose.Schema({
-  userId: { type: Number, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   releaseDate: { type: Date, required: true },

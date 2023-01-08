@@ -11,8 +11,8 @@ export class MovieService {
     private movieModel: Model<Movie>,
   ) {}
 
-  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
-    return this.movieModel.create(createMovieDto);
+  async create(userId: Types.ObjectId, createMovieDto: CreateMovieDto): Promise<Movie> {
+    return this.movieModel.create({...createMovieDto, userId});
   }
 
   async findAll(): Promise<Movie[]> {

@@ -42,6 +42,7 @@ describe('MovieService', () => {
   let service: MovieService;
   let model: Model<Movie>;
   let movieId = new Types.ObjectId();
+  let userId = new Types.ObjectId();
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -90,8 +91,7 @@ describe('MovieService', () => {
         imageUrl: ' https://imdb.net/lmnopq',
       }),
     );
-    const movie = await service.create({
-      userId: 1,
+    const movie = await service.create(userId, {
       title: 'Movie Title',
       description: 'Movie description',
       releaseDate: '2023-01-07',

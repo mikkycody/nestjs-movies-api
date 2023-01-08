@@ -24,10 +24,6 @@ export class CreateMovieDto {
   @MaxLength(500)
   description: String;
 
-  @IsNumber()
-  @IsNotEmpty()
-  userId: Number;
-
   @IsISO8601(
     { strict: true },
     {

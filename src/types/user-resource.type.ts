@@ -1,7 +1,7 @@
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 export type UserResourceType = {
-  id: ObjectId;
+  id: Types.ObjectId;
   email: String;
   firstName: String;
   lastName: String;
