@@ -4,12 +4,12 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '../../../src/interfaces';
-
+import { USER_MODEL } from '../../../config/constants';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     config: ConfigService,
-    @Inject('USER_MODEL')
+    @Inject(USER_MODEL)
     private userModel: Model<User>,
   ) {
     super({

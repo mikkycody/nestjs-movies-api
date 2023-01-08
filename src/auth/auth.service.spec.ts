@@ -1,16 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User } from '../../src/interfaces';
 import { AuthService } from './auth.service';
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { USER_MODEL } from '../../config/constants';
 
 const mockUser = {
   firstName: 'John',
   lastName: 'Doe',
   email: 'johndoe@test.com',
   password: '$hashedpassword',
+};
+
+const loginData = {
+  email: mockUser.email,
+  password: mockUser.password,
 };
 
 describe('AuthService', () => {
@@ -23,7 +29,7 @@ describe('AuthService', () => {
         JwtService,
         ConfigService,
         {
-          provide: 'USER_MODEL',
+          provide: USER_MODEL,
           useValue: {
             new: jest.fn().mockResolvedValue(mockUser),
             constructor: jest.fn().mockResolvedValue(mockUser),
@@ -36,7 +42,7 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get(AuthService);
-    model = module.get<Model<User>>('USER_MODEL');
+    model = module.get<Model<User>>(USER_MODEL);
   });
 
   it('should be defined', () => {
@@ -44,21 +50,11 @@ describe('AuthService', () => {
   });
 
   it('should register a user', async () => {
-    jest.spyOn(model, 'create').mockImplementationOnce(() =>
-      Promise.resolve({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'johndoe@test.com',
-        password: '$hashedpassword',
-      }),
-    );
+    jest
+      .spyOn(model, 'create')
+      .mockImplementationOnce(() => Promise.resolve(mockUser));
     jest.spyOn(service, 'generateToken').mockResolvedValueOnce('access_token');
-    const user = await service.register({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'johndoe@test.com',
-      password: 'password',
-    });
+    const user = await service.register(mockUser);
     expect(user.email).toEqual(mockUser.email);
     expect(user.token).toEqual('access_token');
   });
@@ -83,10 +79,7 @@ describe('AuthService', () => {
     } as any);
     jest.spyOn(service, 'verifyPassword').mockResolvedValue(false);
     await expect(
-      service.login({
-        email: 'johndoe@test.com',
-        password: 'password',
-      }),
+      service.login(loginData),
     ).rejects.toThrowError(ForbiddenException);
   });
 
@@ -95,10 +88,7 @@ describe('AuthService', () => {
       exec: jest.fn().mockResolvedValueOnce(null),
     } as any);
     await expect(
-      service.login({
-        email: 'johndoe@test.com',
-        password: 'password',
-      }),
+      service.login(loginData),
     ).rejects.toThrowError(ForbiddenException);
   });
 });
