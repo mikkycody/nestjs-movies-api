@@ -4,6 +4,7 @@ import { AppModule } from './../src/app.module';
 import * as mongoose from 'mongoose';
 import { LoginUserDto, RegisterUserDto } from 'src/auth/dto';
 import * as pactum from 'pactum';
+import { MongoExceptionFilter } from '../src/exceptions';
 
 async function refreshDB() {
   const collections = await mongoose.connection.db.collections();
@@ -23,6 +24,7 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+    app.useGlobalFilters(new MongoExceptionFilter());
     await app.init();
     await app.listen(3333);
     refreshDB();
@@ -37,19 +39,15 @@ describe('AppController (e2e)', () => {
   // return server.get('/movies').expect(200).expect([]);
   // });
   describe('Authentication', () => {
-    const registerDto: RegisterUserDto = {
+    const mockUserDto: RegisterUserDto = {
       email: 'test@gmail.com',
       password: '$Password1#',
       firstName: 'John',
       lastName: 'Doe',
     };
 
-    const loginDto: LoginUserDto = {
-      email: 'test@gmail.com',
-      password: 'password',
-    };
-    describe('Signup', () => {
-      it('should not signup if body is empty', () => {
+    describe('sign up', () => {
+      it('should not sign up if body is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
@@ -60,6 +58,9 @@ describe('AppController (e2e)', () => {
               'email should not be empty',
               'password should not be empty',
               'password must be a string',
+              'password not strong enough',
+              'password must be shorter than or equal to 20 characters',
+              'password must be longer than or equal to 8 characters',
               'firstName should not be empty',
               'firstName must be a string',
               'lastName should not be empty',
@@ -68,14 +69,14 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if email is empty', () => {
+      it('should not sign up if email is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            password: registerDto.password,
-            firstName: registerDto.firstName,
-            lastName: registerDto.lastName,
+            password: mockUserDto.password,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -83,15 +84,15 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if email is not a valid email', () => {
+      it('should not sign up if email is not a valid email', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
             email: 'invalid',
-            password: registerDto.password,
-            firstName: registerDto.firstName,
-            lastName: registerDto.lastName,
+            password: mockUserDto.password,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -99,14 +100,14 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if password is empty', () => {
+      it('should not sign up if password is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            email: registerDto.email,
-            firstName: registerDto.firstName,
-            lastName: registerDto.lastName,
+            email: mockUserDto.email,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -114,15 +115,15 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if password is not strong enough', () => {
+      it('should not sign up if password is not strong enough', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            email: registerDto.email,
+            email: mockUserDto.email,
             password: 'weak',
-            firstName: registerDto.firstName,
-            lastName: registerDto.lastName,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -133,14 +134,14 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if first name is empty', () => {
+      it('should not sign up if first name is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            email: registerDto.email,
-            password: registerDto.password,
-            lastName: registerDto.lastName,
+            email: mockUserDto.email,
+            password: mockUserDto.password,
+            lastName: mockUserDto.lastName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -151,14 +152,14 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if last name is empty', () => {
+      it('should not sign up if last name is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            email: registerDto.email,
-            password: registerDto.password,
-            firstName: registerDto.firstName,
+            email: mockUserDto.email,
+            password: mockUserDto.password,
+            firstName: mockUserDto.firstName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -169,14 +170,14 @@ describe('AppController (e2e)', () => {
           });
       });
 
-      it('should not signup if last name is empty', () => {
+      it('should not sign up if last name is empty', () => {
         return pactum
           .spec()
           .post('auth/register')
           .withBody({
-            email: registerDto.email,
-            password: registerDto.password,
-            firstName: registerDto.firstName,
+            email: mockUserDto.email,
+            password: mockUserDto.password,
+            firstName: mockUserDto.firstName,
           })
           .expectStatus(400)
           .expectJsonLike({
@@ -185,6 +186,129 @@ describe('AppController (e2e)', () => {
               'lastName must be a string',
             ],
           });
+      });
+
+      it('should sign up', () => {
+        return pactum
+          .spec()
+          .post('auth/register')
+          .withBody(mockUserDto)
+          .expectStatus(201)
+          .expectJsonLike({
+            email: mockUserDto.email,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
+          });
+      });
+
+      it('should not sign up if email is taken', () => {
+        return pactum
+          .spec()
+          .post('auth/register')
+          .withBody(mockUserDto)
+          .expectStatus(409)
+          .expectJsonLike({
+            message: 'email has been taken',
+          });
+      });
+
+      it('should not sign in if body is empty', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .expectStatus(400)
+          .expectJsonLike({
+            message: [
+              'email must be an email',
+              'email should not be empty',
+              'password should not be empty',
+              'password must be a string',
+            ],
+          });
+      });
+
+      it('should not sign in if email is empty', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            password: mockUserDto.password,
+          })
+          .expectStatus(400)
+          .expectJsonLike({
+            message: ['email must be an email', 'email should not be empty'],
+          });
+      });
+
+      it('should not sign in if email is not a valid email', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            email: 'invalid',
+            password: mockUserDto.password,
+          })
+          .expectStatus(400)
+          .expectJsonLike({
+            message: ['email must be an email'],
+          });
+      });
+
+      it('should not sign in if password is empty', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            email: mockUserDto.email,
+          })
+          .expectStatus(400)
+          .expectJsonLike({
+            message: ['password should not be empty'],
+          });
+      });
+
+      it('should not sign in if email does not exist', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            email: 'doesntexist@test.com',
+            password: mockUserDto.password,
+          })
+          .expectStatus(403)
+          .expectJsonLike({
+            message: 'Credentials do not match',
+          });
+      });
+
+      it('should not sign in with wrong user details', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            email: mockUserDto.email,
+            password: 'wrongpassword',
+          })
+          .expectStatus(403)
+          .expectJsonLike({
+            message: 'Credentials do not match',
+          });
+      });
+
+      it('should sign in', () => {
+        return pactum
+          .spec()
+          .post('auth/login')
+          .withBody({
+            email: mockUserDto.email,
+            password: mockUserDto.password,
+          })
+          .expectStatus(200)
+          .expectJsonLike({
+            email: mockUserDto.email,
+            firstName: mockUserDto.firstName,
+            lastName: mockUserDto.lastName,
+          }).stores('bearer_token', 'token');
       });
     });
   });
