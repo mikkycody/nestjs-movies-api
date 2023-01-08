@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { GenderEnum } from 'src/enums';
+import { GenderEnum } from '../../../src/enums';
 
 export class UpdateMovieDto {
   @IsString()
@@ -26,11 +26,6 @@ export class UpdateMovieDto {
   @MaxLength(500)
   @IsOptional()
   description?: String;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @IsOptional()
-  userId?: Number;
 
   @IsISO8601(
     { strict: true },

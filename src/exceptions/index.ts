@@ -1,0 +1,1 @@
+export * from './mongo-error.exception'

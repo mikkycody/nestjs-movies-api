@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { GenderEnum } from 'src/enums';
+import { GenderEnum } from '../../../src/enums';
 
 export class CreateMovieDto {
   @IsString()
@@ -23,10 +23,6 @@ export class CreateMovieDto {
   @IsNotEmpty()
   @MaxLength(500)
   description: String;
-
-  @IsNumber()
-  @IsNotEmpty()
-  userId: Number;
 
   @IsISO8601(
     { strict: true },
