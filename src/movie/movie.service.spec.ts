@@ -80,42 +80,24 @@ describe('MovieService', () => {
   });
 
   it('should create a movie', async () => {
-    jest.spyOn(model, 'create').mockImplementationOnce(() =>
-      Promise.resolve({
-        userId,
-        title: 'Movie Title',
-        description: 'Movie description',
-        releaseDate: '2023-01-07',
-        rating: 4,
-        gender: 'Male',
-        actors: ['Jackie chan', 'George Bush'],
-        imageUrl: 'https://imdb.net/lmnopq',
-      }),
-    );
+    jest
+      .spyOn(model, 'create')
+      .mockImplementationOnce(() => Promise.resolve(mockMovie));
     const movie = await service.create(userId, {
-      title: 'Movie Title',
-      description: 'Movie description',
-      releaseDate: '2023-01-07',
-      rating: 4,
-      gender: 'Male' as GenderEnum,
-      actors: ['Jackie chan', 'George Bush'],
-      imageUrl: 'https://imdb.net/lmnopq',
+      title: mockMovie.title,
+      description: mockMovie.description,
+      releaseDate: mockMovie.releaseDate,
+      rating: mockMovie.rating,
+      gender: mockMovie.gender as GenderEnum,
+      actors: mockMovie.actors,
+      imageUrl: mockMovie.imageUrl,
     });
     expect(movie).toEqual(mockMovie);
   });
 
   it('should update a movie', async () => {
     jest.spyOn(model, 'findByIdAndUpdate').mockReturnValueOnce({
-      exec: jest.fn().mockResolvedValueOnce({
-        userId,
-        title: 'Updated Movie Title',
-        description: 'Movie description',
-        releaseDate: '2023-01-07',
-        rating: 4,
-        gender: 'Male',
-        actors: ['Jackie chan', 'George Bush'],
-        imageUrl: 'https://imdb.net/lmnopq',
-      }),
+      exec: jest.fn().mockResolvedValueOnce(mockMovie),
     } as any);
 
     jest.spyOn(model, 'findById').mockReturnValueOnce({
@@ -126,16 +108,7 @@ describe('MovieService', () => {
     const movie = await service.update(movieId.toString(), userId, {
       title: 'Updated Movie Title',
     });
-    expect(movie).toEqual({
-      userId,
-      title: 'Updated Movie Title',
-      description: 'Movie description',
-      releaseDate: '2023-01-07',
-      rating: 4,
-      gender: 'Male',
-      actors: ['Jackie chan', 'George Bush'],
-      imageUrl: 'https://imdb.net/lmnopq',
-    });
+    expect(movie).toEqual(mockMovie);
   });
 
   it('should not update a movie that does not exist', async () => {
@@ -162,16 +135,7 @@ describe('MovieService', () => {
 
   it('should delete a movie', async () => {
     jest.spyOn(model, 'findByIdAndDelete').mockReturnValueOnce({
-      exec: jest.fn().mockResolvedValueOnce({
-        userId,
-        title: 'Movie Title',
-        description: 'Movie description',
-        releaseDate: '2023-01-07',
-        rating: 4,
-        gender: 'Male',
-        actors: ['Jackie chan', 'George Bush'],
-        imageUrl: 'https://imdb.net/lmnopq',
-      }),
+      exec: jest.fn().mockResolvedValueOnce(mockMovie),
     } as any);
     jest.spyOn(model, 'findById').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValueOnce({
@@ -179,16 +143,7 @@ describe('MovieService', () => {
       }),
     } as any);
     const movie = await service.destroy(movieId.toString(), userId);
-    expect(movie).toEqual({
-      userId,
-      title: 'Movie Title',
-      description: 'Movie description',
-      releaseDate: '2023-01-07',
-      rating: 4,
-      gender: 'Male',
-      actors: ['Jackie chan', 'George Bush'],
-      imageUrl: 'https://imdb.net/lmnopq',
-    });
+    expect(movie).toEqual(mockMovie);
   });
 
   it('should not delete a movie that does not exist', async () => {
