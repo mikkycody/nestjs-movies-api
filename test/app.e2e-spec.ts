@@ -731,7 +731,7 @@ describe('AppController (e2e)', () => {
 
     describe('Update movie', () => {
       it('should not update movie if user is not owner', async () => {
-        // reate new user and use the new user bearer token to update a movie that was not created by the user.
+        // create new user and use the new user bearer token to update a movie that was not created by the user.
         await pactum
           .spec()
           .post(registerRoute)
@@ -772,7 +772,7 @@ describe('AppController (e2e)', () => {
         return pactum
           .spec()
           .patch(`${moviesRoute}/{id}`)
-          .withPathParams('id', '$S{movieId}') // use a non existing, random objectId
+          .withPathParams('id', '$S{movieId}')
           .withHeaders({ Authorization: 'Bearer $S{bearer_token}' })
           .withBody({ title: 'Updated Movie Title' })
           .expectStatus(HttpStatus.OK)
@@ -809,7 +809,7 @@ describe('AppController (e2e)', () => {
         return pactum
           .spec()
           .patch(`${moviesRoute}/{id}`)
-          .withPathParams('id', '$S{movieId}') // use a non existing, random objectId
+          .withPathParams('id', '$S{movieId}')
           .withHeaders({ Authorization: 'Bearer $S{bearer_token}' })
           .expectStatus(HttpStatus.OK)
           .expectBodyContains('$S{movieId}');
