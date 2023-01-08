@@ -1,9 +1,9 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { GenderEnum } from '../../src/enums';
 
 export interface Movie extends Document {
   readonly title: String;
-  readonly userId: Number;
+  readonly userId: Types.ObjectId;
   readonly description: String;
   readonly releaseDate: Date;
   readonly rating: Number;

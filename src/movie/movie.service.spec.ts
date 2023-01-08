@@ -3,6 +3,7 @@ import { MovieService } from './movie.service';
 import { Model, Types } from 'mongoose';
 import { Movie } from '../../src/interfaces';
 import { GenderEnum } from '../../src/enums';
+import { ForbiddenException } from '@nestjs/common';
 
 const mockMovie = {
   userId: 1,
@@ -54,6 +55,7 @@ describe('MovieService', () => {
             constructor: jest.fn().mockResolvedValue(mockMovie),
             find: jest.fn(),
             create: jest.fn(),
+            findById: jest.fn(),
             findByIdAndUpdate: jest.fn(),
             findByIdAndDelete: jest.fn(),
             exec: jest.fn(),
@@ -106,7 +108,7 @@ describe('MovieService', () => {
   it('should update a movie', async () => {
     jest.spyOn(model, 'findByIdAndUpdate').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValueOnce({
-        userId: 1,
+        userId,
         title: 'Updated Movie Title',
         description: 'Movie description',
         releaseDate: '2023-01-07',
@@ -116,11 +118,17 @@ describe('MovieService', () => {
         imageUrl: ' https://imdb.net/lmnopq',
       }),
     } as any);
-    const movie = await service.update(movieId, {
+
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({
+        userId,
+      }),
+    } as any);
+    const movie = await service.update(movieId.toString(), userId, {
       title: 'Updated Movie Title',
     });
     expect(movie).toEqual({
-      userId: 1,
+      userId,
       title: 'Updated Movie Title',
       description: 'Movie description',
       releaseDate: '2023-01-07',
@@ -131,10 +139,32 @@ describe('MovieService', () => {
     });
   });
 
+  it('should not update a movie that does not exist', async () => {
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce(null),
+    } as any);
+    await expect(
+      service.update(movieId.toString(), userId, {
+        title: 'Updated Movie Title',
+      }),
+    ).rejects.toThrowError(ForbiddenException);
+  });
+
+  it('should not update a movie that does not belong to user', async () => {
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({ userId: 'incorrect' }),
+    } as any);
+    await expect(
+      service.update(movieId.toString(), userId, {
+        title: 'Updated Movie Title',
+      }),
+    ).rejects.toThrowError(ForbiddenException);
+  });
+
   it('should delete a movie', async () => {
     jest.spyOn(model, 'findByIdAndDelete').mockReturnValueOnce({
       exec: jest.fn().mockResolvedValueOnce({
-        userId: 1,
+        userId,
         title: 'Movie Title',
         description: 'Movie description',
         releaseDate: '2023-01-07',
@@ -144,9 +174,14 @@ describe('MovieService', () => {
         imageUrl: ' https://imdb.net/lmnopq',
       }),
     } as any);
-    const movie = await service.destroy(movieId);
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({
+        userId,
+      }),
+    } as any);
+    const movie = await service.destroy(movieId.toString(), userId);
     expect(movie).toEqual({
-      userId: 1,
+      userId,
       title: 'Movie Title',
       description: 'Movie description',
       releaseDate: '2023-01-07',
@@ -155,5 +190,23 @@ describe('MovieService', () => {
       actors: ['Jackie chan', 'George Bush'],
       imageUrl: ' https://imdb.net/lmnopq',
     });
+  });
+
+  it('should not delete a movie that does not exist', async () => {
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce(null),
+    } as any);
+    await expect(
+      service.destroy(movieId.toString(), userId),
+    ).rejects.toThrowError(ForbiddenException);
+  });
+
+  it('should not delete a movie that does not belong to user', async () => {
+    jest.spyOn(model, 'findById').mockReturnValueOnce({
+      exec: jest.fn().mockResolvedValueOnce({ userId: 'incorrect' }),
+    } as any);
+    await expect(
+      service.destroy(movieId.toString(), userId),
+    ).rejects.toThrowError(ForbiddenException);
   });
 });

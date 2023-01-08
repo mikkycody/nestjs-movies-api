@@ -27,11 +27,6 @@ export class UpdateMovieDto {
   @IsOptional()
   description?: String;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @IsOptional()
-  userId?: Number;
-
   @IsISO8601(
     { strict: true },
     {

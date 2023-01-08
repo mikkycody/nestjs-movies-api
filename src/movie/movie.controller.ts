@@ -19,8 +19,8 @@ import { GetUser } from 'src/auth/decorator';
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
-  @Post()
   @UseGuards(JwtGuard)
+  @Post()
   async create(
     @GetUser('id') userId: Types.ObjectId,
     @Body() createMovieDto: CreateMovieDto,
@@ -33,16 +33,22 @@ export class MovieController {
     return this.movieService.findAll();
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
   async update(
-    @Param('id') movieId: Types.ObjectId,
-    @Body() dto: UpdateMovieDto,
+    @Param('id') movieId: string,
+    @GetUser('id') userId: Types.ObjectId,
+    @Body() updateMovieDto: UpdateMovieDto,
   ) {
-    return this.movieService.update(movieId, dto);
+    return this.movieService.update(movieId, userId, updateMovieDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  async destroy(@Param('id') movieId: Types.ObjectId) {
-    return this.movieService.destroy(movieId);
+  async destroy(
+    @Param('id') movieId: string,
+    @GetUser('id') userId: Types.ObjectId,
+  ) {
+    return this.movieService.destroy(movieId, userId);
   }
 }
