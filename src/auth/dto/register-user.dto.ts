@@ -21,7 +21,7 @@ export class RegisterUserDto {
       '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$',
     ),
     {
-      message: 'password not strong enough',
+      message: 'password must be 8 characters or more, must contain mixed case, number and symbol',
     },
   )
   password: string;

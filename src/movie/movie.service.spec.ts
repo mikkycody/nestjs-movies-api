@@ -5,45 +5,44 @@ import { Movie } from '../../src/interfaces';
 import { GenderEnum } from '../../src/enums';
 import { ForbiddenException } from '@nestjs/common';
 
-const mockMovie = {
-  userId: 1,
-  title: 'Movie Title',
-  description: 'Movie description',
-  releaseDate: '2023-01-07',
-  rating: 4,
-  gender: 'Male',
-  actors: ['Jackie chan', 'George Bush'],
-  imageUrl: ' https://imdb.net/lmnopq',
-};
-
-const mockMovieCollection = [
-  {
-    userId: 1,
+describe('MovieService', () => {
+  let service: MovieService;
+  let model: Model<Movie>;
+  let movieId = new Types.ObjectId();
+  let userId = new Types.ObjectId();
+  const mockMovie = {
+    userId,
     title: 'Movie Title',
     description: 'Movie description',
     releaseDate: '2023-01-07',
     rating: 4,
     gender: 'Male',
     actors: ['Jackie chan', 'George Bush'],
-    imageUrl: ' https://imdb.net/lmnopq',
-  },
-  {
-    userId: 1,
-    title: 'Movie Title 2',
-    description: 'Movie description 2',
-    releaseDate: '2023-01-07',
-    rating: 5,
-    gender: 'Female',
-    actors: ['Jackie chan', 'George Bush'],
-    imageUrl: ' https://imdb.net/lmnopq',
-  },
-];
+    imageUrl: 'https://imdb.net/lmnopq',
+  };
 
-describe('MovieService', () => {
-  let service: MovieService;
-  let model: Model<Movie>;
-  let movieId = new Types.ObjectId();
-  let userId = new Types.ObjectId();
+  const mockMovieCollection = [
+    {
+      userId,
+      title: 'Movie Title',
+      description: 'Movie description',
+      releaseDate: '2023-01-07',
+      rating: 4,
+      gender: 'Male',
+      actors: ['Jackie chan', 'George Bush'],
+      imageUrl: 'https://imdb.net/lmnopq',
+    },
+    {
+      userId,
+      title: 'Movie Title 2',
+      description: 'Movie description 2',
+      releaseDate: '2023-01-07',
+      rating: 5,
+      gender: 'Female',
+      actors: ['Jackie chan', 'George Bush'],
+      imageUrl: 'https://imdb.net/lmnopq',
+    },
+  ];
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -83,14 +82,14 @@ describe('MovieService', () => {
   it('should create a movie', async () => {
     jest.spyOn(model, 'create').mockImplementationOnce(() =>
       Promise.resolve({
-        userId: 1,
+        userId,
         title: 'Movie Title',
         description: 'Movie description',
         releaseDate: '2023-01-07',
         rating: 4,
         gender: 'Male',
         actors: ['Jackie chan', 'George Bush'],
-        imageUrl: ' https://imdb.net/lmnopq',
+        imageUrl: 'https://imdb.net/lmnopq',
       }),
     );
     const movie = await service.create(userId, {
@@ -100,7 +99,7 @@ describe('MovieService', () => {
       rating: 4,
       gender: 'Male' as GenderEnum,
       actors: ['Jackie chan', 'George Bush'],
-      imageUrl: ' https://imdb.net/lmnopq',
+      imageUrl: 'https://imdb.net/lmnopq',
     });
     expect(movie).toEqual(mockMovie);
   });
@@ -115,7 +114,7 @@ describe('MovieService', () => {
         rating: 4,
         gender: 'Male',
         actors: ['Jackie chan', 'George Bush'],
-        imageUrl: ' https://imdb.net/lmnopq',
+        imageUrl: 'https://imdb.net/lmnopq',
       }),
     } as any);
 
@@ -135,7 +134,7 @@ describe('MovieService', () => {
       rating: 4,
       gender: 'Male',
       actors: ['Jackie chan', 'George Bush'],
-      imageUrl: ' https://imdb.net/lmnopq',
+      imageUrl: 'https://imdb.net/lmnopq',
     });
   });
 
@@ -171,7 +170,7 @@ describe('MovieService', () => {
         rating: 4,
         gender: 'Male',
         actors: ['Jackie chan', 'George Bush'],
-        imageUrl: ' https://imdb.net/lmnopq',
+        imageUrl: 'https://imdb.net/lmnopq',
       }),
     } as any);
     jest.spyOn(model, 'findById').mockReturnValueOnce({
@@ -188,7 +187,7 @@ describe('MovieService', () => {
       rating: 4,
       gender: 'Male',
       actors: ['Jackie chan', 'George Bush'],
-      imageUrl: ' https://imdb.net/lmnopq',
+      imageUrl: 'https://imdb.net/lmnopq',
     });
   });
 
