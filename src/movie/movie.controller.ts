@@ -13,7 +13,7 @@ import { CreateMovieDto } from './dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Types } from 'mongoose';
 import { JwtGuard } from '../../src/auth/guard';
-import { GetUser } from 'src/auth/decorator';
+import { GetUser } from '../../src/auth/decorator';
 
 @Controller('movies')
 export class MovieController {

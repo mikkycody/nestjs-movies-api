@@ -28,7 +28,7 @@ export class CreateMovieDto {
     { strict: true },
     {
       message:
-        'Release date must be a valid date and must be in the format YYYY-MM-DD',
+        'releaseDate must be a valid date and must be in the format YYYY-MM-DD',
     },
   )
   @IsNotEmpty()
