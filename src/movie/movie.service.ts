@@ -3,11 +3,12 @@ import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { Movie } from '../interfaces/index';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { MOVIE_MODEL } from '../../config/constants';
 
 @Injectable()
 export class MovieService {
   constructor(
-    @Inject('MOVIE_MODEL')
+    @Inject(MOVIE_MODEL)
     private movieModel: Model<Movie>,
   ) {}
 

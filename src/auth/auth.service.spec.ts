@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User } from '../../src/interfaces';
 import { AuthService } from './auth.service';
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { USER_MODEL } from '../../config/constants';
 
 const mockUser = {
   firstName: 'John',
@@ -28,7 +29,7 @@ describe('AuthService', () => {
         JwtService,
         ConfigService,
         {
-          provide: 'USER_MODEL',
+          provide: USER_MODEL,
           useValue: {
             new: jest.fn().mockResolvedValue(mockUser),
             constructor: jest.fn().mockResolvedValue(mockUser),
@@ -41,7 +42,7 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get(AuthService);
-    model = module.get<Model<User>>('USER_MODEL');
+    model = module.get<Model<User>>(USER_MODEL);
   });
 
   it('should be defined', () => {

@@ -6,11 +6,12 @@ import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UserResourceType } from '../../src/types';
+import { USER_MODEL } from '../../config/constants';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('USER_MODEL')
+    @Inject(USER_MODEL)
     private userModel: Model<User>,
     private jwt: JwtService,
     private config: ConfigService,

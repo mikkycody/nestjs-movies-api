@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { Movie } from '../../src/interfaces';
 import { GenderEnum } from '../../src/enums';
 import { ForbiddenException } from '@nestjs/common';
+import { MOVIE_MODEL } from '../../config/constants';
 
 describe('MovieService', () => {
   let service: MovieService;
@@ -48,7 +49,7 @@ describe('MovieService', () => {
       providers: [
         MovieService,
         {
-          provide: 'MOVIE_MODEL',
+          provide: MOVIE_MODEL,
           useValue: {
             new: jest.fn().mockResolvedValue(mockMovie),
             constructor: jest.fn().mockResolvedValue(mockMovie),
@@ -64,7 +65,7 @@ describe('MovieService', () => {
     }).compile();
 
     service = module.get(MovieService);
-    model = module.get<Model<Movie>>('MOVIE_MODEL');
+    model = module.get<Model<Movie>>(MOVIE_MODEL);
   });
 
   it('should be defined', () => {
