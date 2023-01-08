@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
-import { User } from 'src/interfaces';
+import { Model, Types } from 'mongoose';
+import { User } from '../../src/interfaces';
 import { AuthService } from './auth.service';
 import { ForbiddenException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 const mockUser = {
   firstName: 'John',
@@ -10,6 +12,7 @@ const mockUser = {
   email: 'johndoe@test.com',
   password: '$hashedpassword',
 };
+
 describe('AuthService', () => {
   let service: AuthService;
   let model: Model<User>;
@@ -17,6 +20,8 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
+        JwtService,
+        ConfigService,
         {
           provide: 'USER_MODEL',
           useValue: {
@@ -47,13 +52,15 @@ describe('AuthService', () => {
         password: '$hashedpassword',
       }),
     );
+    jest.spyOn(service, 'generateToken').mockResolvedValueOnce('access_token');
     const user = await service.register({
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@test.com',
       password: 'password',
     });
-    expect(user).toEqual(mockUser);
+    expect(user.email).toEqual(mockUser.email);
+    expect(user.token).toEqual('access_token');
   });
 
   it('should login a user', async () => {
@@ -61,11 +68,13 @@ describe('AuthService', () => {
       exec: jest.fn().mockResolvedValueOnce(mockUser),
     } as any);
     jest.spyOn(service, 'verifyPassword').mockResolvedValue(true);
+    jest.spyOn(service, 'generateToken').mockResolvedValueOnce('access_token');
     const user = await service.login({
       email: 'johndoe@test.com',
       password: 'password',
     });
-    expect(user).toEqual(mockUser);
+    expect(user.email).toEqual(mockUser.email);
+    expect(user.token).toEqual('access_token');
   });
 
   it('should not login a user with wrong password', async () => {

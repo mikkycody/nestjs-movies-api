@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MovieService } from './movie.service';
 import { Model, Types } from 'mongoose';
-import { Movie } from 'src/interfaces';
-import { GenderEnum } from 'src/enums';
+import { Movie } from '../../src/interfaces';
+import { GenderEnum } from '../../src/enums';
 
 const mockMovie = {
   userId: 1,

@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { GenderEnum } from 'src/enums';
+import { GenderEnum } from '../../../src/enums';
 export const MovieSchema = new mongoose.Schema({
   userId: { type: Number, required: true },
   title: { type: String, required: true },
