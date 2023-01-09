@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MovieService } from './movie.service';
 import { Model, Types } from 'mongoose';
 import { Movie } from '../interfaces';
-import { GenderEnum } from '../enums';
+import { GenderEnum } from '../tmp/enums';
 import { ForbiddenException } from '@nestjs/common';
 import { MOVIE_MODEL } from '../config/constants';
 
