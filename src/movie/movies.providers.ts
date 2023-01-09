@@ -1,6 +1,6 @@
 import { Connection } from 'mongoose';
-import { MovieSchema } from '../../database/schemas/Movie/movie.schema';
-import { MOVIE_MODEL, DATABASE_CONNECTION } from '../../config/constants';
+import { MovieSchema } from '../database/schemas/Movie/movie.schema';
+import { MOVIE_MODEL, DATABASE_CONNECTION } from '../config/constants';
 
 export const moviesProviders = [
   {

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import { User } from '../../src/interfaces';
+import { User } from '../interfaces';
 import { AuthService } from './auth.service';
 import { ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { USER_MODEL } from '../../config/constants';
+import { USER_MODEL } from '../config/constants';
 
 const mockUser = {
   firstName: 'John',
