@@ -13,20 +13,33 @@ import {
   Min,
 } from 'class-validator';
 import { GenderEnum } from '../../enums';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateMovieDto {
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @IsString()
   @IsNotEmpty()
   @MaxLength(120)
   @IsOptional()
   title?: String;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @IsString()
   @IsNotEmpty()
   @MaxLength(500)
   @IsOptional()
   description?: String;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @IsISO8601(
     { strict: true },
     {
@@ -38,6 +51,10 @@ export class UpdateMovieDto {
   @IsOptional()
   releaseDate?: String;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @Min(1)
   @Max(5)
   @IsNumber()
@@ -45,17 +62,29 @@ export class UpdateMovieDto {
   @IsOptional()
   rating?: Number;
 
+  @ApiPropertyOptional({
+    enum: GenderEnum,
+    description: 'This is an optional property',
+  })
   @IsNotEmpty()
   @IsEnum(GenderEnum)
   @IsOptional()
   gender?: GenderEnum;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
   @IsOptional()
   actors?: Array<String>;
 
+  @ApiPropertyOptional({
+    type: String,
+    description: 'This is an optional property',
+  })
   @IsUrl()
   @IsNotEmpty()
   @IsOptional()
