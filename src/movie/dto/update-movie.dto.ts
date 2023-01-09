@@ -12,7 +12,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { GenderEnum } from '../../../src/enums';
+import { GenderEnum } from '../../enums';
 
 export class UpdateMovieDto {
   @IsString()

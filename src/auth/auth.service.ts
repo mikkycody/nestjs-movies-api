@@ -1,12 +1,12 @@
-import { Model, ObjectId } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { User } from '../interfaces/index';
 import { LoginUserDto, RegisterUserDto } from './dto';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserResourceType } from '../../src/types';
-import { USER_MODEL } from '../../config/constants';
+import { UserResourceType } from '../types';
+import { USER_MODEL } from '../config/constants';
 
 @Injectable()
 export class AuthService {
@@ -67,7 +67,7 @@ export class AuthService {
     };
   }
 
-  generateToken(userId: ObjectId, email: string): Promise<string> {
+  generateToken(userId: Types.ObjectId, email: string): Promise<string> {
     const payload = {
       sub: userId,
       email,
